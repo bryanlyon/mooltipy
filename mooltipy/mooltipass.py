@@ -176,7 +176,7 @@ class _Mooltipass(object):
 
         self._epout.write(arraytosend)
 
-    def recv_packet(self, timeout=17500):
+    def recv_packet(self, timeout=300000):
         """Receives a packet from the mooltipass.
 
         Returns a tuple (data, data_length_indicator).
@@ -220,6 +220,7 @@ class _Mooltipass(object):
                     # This feature is broken in the firmware and should
                     # not be implemented.
                     print('HEY I GOT A 0xC4!')
+                    sys.exit(1)
                 else:
                     break
             time.sleep(.5)
@@ -291,7 +292,9 @@ class _Mooltipass(object):
             3 -- No card inserted into mooltipass
         """
 
-        self.send_packet(CMD_CONTEXT, array('B', context + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,context))
+        self.send_packet(CMD_CONTEXT, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet(10000)
         return recv[0]
 
@@ -324,7 +327,9 @@ class _Mooltipass(object):
 
         Return 1 or 0 indicating success or failure.
         """
-        self.send_packet(CMD_SET_LOGIN, array('B', login + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,login))
+        self.send_packet(CMD_SET_LOGIN, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet()
         return recv[0]
 
@@ -333,7 +338,9 @@ class _Mooltipass(object):
 
         Return 1 or 0 indicating success or failure.
         """
-        self.send_packet(CMD_SET_PASSWORD, array('B', password + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,password))
+        self.send_packet(CMD_SET_PASSWORD, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet()
         return recv[0]
 
@@ -349,7 +356,9 @@ class _Mooltipass(object):
         # A timer blocks repeated checking of passwords.
         # A return of 0x02 means the timer is still counting down.
         while recv is None or recv == 0x02:
-            self.send_packet(CMD_CHECK_PASSWORD, array('B', password + b'\x00'))
+            bytes = bytearray()
+            bytes.extend(map(ord,password))
+            self.send_packet(CMD_CHECK_PASSWORD, array('B', bytes + b'\x00'))
             recv, _ = self.recv_packet()
             recv = recv[0]
             time.sleep(.2)
@@ -361,7 +370,9 @@ class _Mooltipass(object):
 
         Return 1 or 0 indicating success or failure.
         """
-        self.send_packet(CMD_ADD_CONTEXT, array('B', context + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,context))
+        self.send_packet(CMD_ADD_CONTEXT, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet()
         return recv[0]
 
@@ -563,7 +574,9 @@ class _Mooltipass(object):
         Return 1 or 0 indicating success or failure.
         """
         print('sending ' + context)
-        self.send_packet(CMD_ADD_DATA_SERVICE, array('B', context + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,context))
+        self.send_packet(CMD_ADD_DATA_SERVICE, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet()
         return recv[0]
 
