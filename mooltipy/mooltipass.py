@@ -232,7 +232,7 @@ class _Mooltipass(object):
         # value.
         #
         # read_node() returns a valid len indicator not counting the cmd byte...
-        #   so subtracting 1 is incorrect, but works in all other cases. 
+        #   so subtracting 1 is incorrect, but works in all other cases.
 
         # Packet len includes the cmd byte, so subtract 1 to match the data len
         return recv[self._DATA_INDEX:], recv[self._PKT_LEN_INDEX]-1
@@ -548,7 +548,9 @@ class _Mooltipass(object):
 
         Return 1 or 0 indicating success or failure.
         """
-        self.send_packet(CMD_SET_DATA_SERVICE, array('B', context + b'\x00'))
+        bytes = bytearray()
+        bytes.extend(map(ord,context))
+        self.send_packet(CMD_SET_DATA_SERVICE, array('B', bytes + b'\x00'))
         recv, _ = self.recv_packet()
         return recv[0]
 

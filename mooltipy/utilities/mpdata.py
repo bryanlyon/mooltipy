@@ -234,6 +234,7 @@ def main():
         pass
     except Exception as e:
         print('\nAn error occurred: \n{}'.format(e))
+        raise e
     finally:
         pass
 
